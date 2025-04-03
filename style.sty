@@ -9,6 +9,7 @@
 \usepackage[unicode]{hyperref}                  % references from the table of contents
 \usepackage{etoolbox,ifthen} 	                % ifthen type of commands
 \usepackage{kvoptions}	                        % define key/value pairs as options for packages and classes
+\usepackage{doi}                                % for DOI for articles.
 
 % package options
 \geometry{  a4paper,        
@@ -19,7 +20,8 @@
 }
 
 % bib style
-\bibliographystyle{alpha}
+% \bibliographystyle{alpha}
+\bibliographystyle{abbrvurl}
 
 % define the boolean variables in which we store the options chosen for the package (language and type of document)
 \newbool{@eng}\setbool{@eng}{false}
