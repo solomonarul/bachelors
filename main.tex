@@ -1,14 +1,10 @@
-%\documentclass[12pt]{scrreprt}
 \documentclass[12pt]{scrreport} 
 
-% language may be romanian or english (default is english)
-% type may be bachelor or master (default is bachelor)
-\usepackage[language=english, type=bachelor]{style}
+% Set up styles.
+\usepackage[language=english, type=bachelor]{universitystyle} % language may be romanian or english (default is english), type may be bachelor or master (default is bachelor)
+\input{customstyle}
 
-%\geometry{a4paper,top=2.5cm,left=3cm,right=2.5cm,bottom=2.5cm}
-%in style
-%controlling the appearance of your headers and footers
-\usepackage{fancyhdr}
+% Set up the article.
 \pagestyle{fancy}
 \lhead{}
 \chead{}
@@ -17,6 +13,7 @@
 
 \begin{document}
 
+% Title page.
 \specialization{ENGLISH}	
 \title{Design, implementation and comparision of different software emulating methods}					   
 \author{Oniga Andrei-Mihai}											
@@ -24,27 +21,26 @@
 				
 \maketitle
 
-
 \newpage
 \thispagestyle{empty}
 \mbox{}
 \newpage
 \pagenumbering{roman}
 
+% Abstract.
 \cleardoublepage
 ABSTRACT
 \vspace{0.5cm}	
 \hrule
 \vspace{0.5cm}	
-%\cleardoublepage
-
 Abstract: un rezumat în limba engleză cu prezentarea, pe scurt, a conținutului pe capitole, punând accent pe contribuțiile proprii și originalitate
 
+% Table of contents.
 \tableofcontents
-
 \newpage
 \pagenumbering{arabic}
 
+% Contents.
 \input{chapters/1_intro}
 \input{chapters/2_bf}
 \input{chapters/3_chip}
