@@ -21,10 +21,12 @@
 
 \par It challenges conventional programming paradigms, as the programmer is forced to manage memory and control flow manually, akin to working in assembly or machine code.
 
+\clearpage
+
 \section{Machine specification}
 \label{sec:ch2sec1}
 
-\begin{table}[]
+\begin{table}[H]
 \centering
 \begin{tabularx}{\textwidth}{| c | Y |}
 \hline
@@ -37,14 +39,15 @@
 . & Outputs the value at the current cell. \\ \hline
 , & Read a value to be placed at the current cell. \\ \hline
 \end{tabularx}
-\caption{ BF commands and their descriptions }
+\caption{BF commands and their descriptions}
 \end{table}
+
+\clearpage
 
 \subsection{Programming in the language}
 \label{sec:ch2sec1sub1}
 
-\clearpage
-\par Well known sample that prints 'Hello World!' to the screen, with a newline at the end:
+\par For us to properly understand how to use the language in a useful manner, let's take a look at a well known sample used for printing 'Hello World!' to the screen:
 \begin{minted}[
     linenos,                % add line numbers
     fontfamily=tt,          % typewriter font
@@ -52,27 +55,95 @@
     breaklines,             % allow line breaks
     tabsize=4               % size of tab
 ]{brainfuck}
-++++++++++
-[
-	>+++++++>++++++++++>+++>+<<<<-
-	lol that's funny
-]
->++.>+.+++++++..+++.>++.<<+++++++++++++++.>.+++.------.--------.>+.>.
+>++++++++[<+++++++++>-]<.
+>++++[<+++++++>-]<+.
++++++++..+++.
+>>++++++[<+++++++>-]<++.
+------------.
+>++++++[<+++++++++>-]<+.
+<.
++++.
+------.
+--------.
+>>>++++[<++++++++>-]<+.
 \end{minted}
+
+\par I took the liberty of splitting the code by each character that is outputted to the screen such that it can be properly observed how the language works.
+
+\par Let's take a look at the code, line by line:
+
+\begin{minted}[
+    linenos,                % add line numbers
+    fontfamily=tt,          % typewriter font
+    fontsize=\small,        % size
+    breaklines,             % allow line breaks
+    tabsize=4               % size of tab
+]{brainfuck}
+>++++++++[<+++++++++>-]<.
+\end{minted}
+
+\par This instruction sequence sets the value of the cell at index \#1 to 8 and in a continous loop decrements that value and increments cell \#2 nine times for each decrement. Thus it sets cell \#2 to value 72, ASCII for the character 'H'.
+
+\par Similar steps are done for all of the other characters except the ones that repeat multiple times, like 'l' which is printed twice by using two dot instructions in the third line, or reusing the value of 'o' from 'Hello' in 'World'.
+
+\par This sequence constitutes a good introduction to the matter at hand as, by coding in the language, common programming patterns can be observed such as the multiplication pattern:
+
+\begin{minted}[
+    linenos,                % add line numbers
+    fontfamily=tt,          % typewriter font
+    fontsize=\small,        % size
+    breaklines,             % allow line breaks
+    tabsize=4               % size of tab
+]{brainfuck}
+(any number of pluses)[(direction change)(any number of pluses)(reversed direction change)-]
+\end{minted}
+
+\par There are also other commonly used patterns, such as:
+
+\begin{minted}[
+    linenos,                % add line numbers
+    fontfamily=tt,          % typewriter font
+    fontsize=\small,        % size
+    breaklines,             % allow line breaks
+    tabsize=4               % size of tab
+]{brainfuck}
+The cell clearing pattern, that sets a cell to 0:
+[-]
+\end{minted}
+
+\begin{minted}[
+    linenos,                % add line numbers
+    fontfamily=tt,          % typewriter font
+    fontsize=\small,        % size
+    breaklines,             % allow line breaks
+    tabsize=4               % size of tab
+]{brainfuck}
+The cell moving pattern, that moves a value to a cell relative to it:
+[(any number of moves)+(same amount of reversed moves)-]
+To be noted that this assumes initial cell value 0, if that value is not 0 it will be added instead.
+If you need it to be specifically moved, you can combine the previous clear pattern with this one.
+\end{minted}
+
 \clearpage
 
 \section{Emulator implementation}
 \label{sec:ch2sec2}
 
-\par The BF language is designed to be minimalistic, and as such, it has a very small set of commands, represented in the table below.
+\par Because of the language's simplicity, there have been many emulators made for it in all kinds of programming languages. As such, the focus will be put on the techniques utilised in the creation of optimized emulators rather than the emulators themselves, as they have been a rather exhausted subject.
 
-\subsection{Interpreter}
+
+\subsection{Emulating yourself?}
 \label{sec:ch2sec2sub1}
+
+\par 
+
+\subsection{Simple interpreter}
+\label{sec:ch2sec2sub2}
 
 \par Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum
 
 \subsection{Static compilation}
-\label{sec:ch2sec2sub2}
+\label{sec:ch2sec2sub3}
 
 \par Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum
 
@@ -86,15 +157,17 @@
 
 \par Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum
 
-\subsection{Condensing operations}
+\subsection{Consolidating operations}
 \label{subsec:ch2sec3sec2}
 
 \par Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum
 
-\subsection{Sequence matching}
+\subsection{Sequence matching for common patterns}
 \label{subsec:ch2sec3sec3}
 
 \par Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum
 
 \section{Testing}
 \label{sec:ch2sec4}
+
+\par 
