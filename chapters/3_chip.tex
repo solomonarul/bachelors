@@ -1,10 +1,10 @@
-\chapter{CHIP8}
+\chapter{CHIP-8}
 \label{chap:ch3}
 
 \section{About}
 \label{sec:ch3sec1}
 
-\par CHIP8, sometimes spelled as CHIP-8, is a programming language and virtual machine specification developed by Joseph Weisbecker on the 1802 processor of the COSMAC VIP computer in the mid-1970s.
+\par CHIP-8, sometimes spelled as CHIP8, is a programming language and virtual machine specification developed by Joseph Weisbecker on the 1802 processor of the COSMAC VIP computer in the mid-1970s.
 
 \par It was meant to be an educational tool mainly designed around creating simple video games with much more ease and less resources than conventional programming languages of the time such as BASIC.
 
@@ -14,7 +14,7 @@
 
 \begin{minipage}{\linewidth}
 \includegraphics[width=\textwidth]{tetris_ch8}
-\captionof{figure}{Tetris clone written in CHIP8 by Fran Dachille in 1991 running in \href{https://github.com/solomonarul/edra}{Edra}.}
+\captionof{figure}{Tetris clone written in CHIP-8 by Fran Dachille in 1991 running in \href{https://github.com/solomonarul/edra}{\texttt{Edra}}.}
 \end{minipage}
 
 \clearpage
@@ -24,17 +24,21 @@
 
 \subsubsection{Memory}
 
-\par The CHIP8 virtual machine has 4KB of accessible memory, as is the limit when using 16-bit memory registers. An exception occurs for the I register used mostly in drawing and array management opcodes, which is a 12-bit register instead of 16-bit. Multi-byte data is stored in big-endian format, meaning that the most significant byte of the instruction is stored first.
+\par The CHIP-8 virtual machine provides 4 KB of accessible memory, reflecting the addressable range of its 16-bit memory registers. An exception to this is the \texttt{I} register, primarily utilized for drawing and memory operations, which is implemented as a 12-bit register rather than 16-bit. Multi-byte data within the system is stored in big-endian format, meaning the most significant byte precedes the least significant byte in memory.
 
-\par Historically, the virtual machine's space overlapped the interpreters', and as such, programs were usually loaded from address 0x200 instead. Nowadays, modern emulators use this space to store font data as they run in a separate memory space to the code they actually run. Also, the uppermost 256 bytes (addresses 0xF00-0xFFF) were used for display data and bellow that (addresses 0xEA0-0xEFF) were reserved by the interpreter for its' own internal use such as the call stack and other variables.
+\par Historically, the virtual machine's memory space overlapped with that of the interpreter, resulting in programs typically being loaded starting at address \texttt{0x200}. In contemporary implementations, this memory region is often repurposed to store font data, as emulators maintain separate memory spaces for code and data.
+
+\par Furthermore, the uppermost 256 bytes of memory (addresses \texttt{0xF00}-\texttt{0xFFF}) were originally allocated for display data. The adjacent lower segment (addresses \texttt{0xEA0}-\texttt{0xEFF}) was reserved for the interpreter's internal use, including the call stack and various system variables, though this reservation is frequently disregarded in modern emulator designs.
 
 \subsubsection{Registers}
 
-\par The machine also hosts 16 general use registers, adnotated V0 to VF. The register VF should not be used in normal circumstances as it is used as a flag in some operations and is also set whenever an collision occurs in the drawing of the sprites.
+\par The CHIP-8 virtual machine contains sixteen general-purpose 8-bit registers, labeled \texttt{V0} through \texttt{VF}. The \texttt{VF} register is reserved for use as a flag by certain instructions and should generally be avoided for storing general data, as its value may be altered implicitly during execution.
 
 \subsubsection{Display}
 
-\par The resolution of the display is 64x32 with a monochrome color. Sprites are drawn to the screen by XOR-ing themselves to the previously drawn data, where, the flag VF is set to 1 in the case of a collision (both pixels are set), like so:
+\par The CHIP-8 display operates at a resolution of 64 by 32 pixels, rendering graphics in monochrome. Sprites are rendered onto the screen using an XOR drawing method, whereby the sprite pixels are bitwise XORed with the existing framebuffer content.
+
+\par This technique allows for simple sprite toggling and erasure. Additionally, the interpreter sets the flag register \texttt{VF} to 1 if any pixel collision occurs during this process, specifically when a pixel is turned off as a result of overlapping pixels, providing a mechanism for collision detection in games and applications.
 
 \begin{table}[H]
 \centering
@@ -67,16 +71,18 @@
     & \cellcolor[HTML]{EFEFEF} &  &  &  & \cellcolor[HTML]{333333} &  &  &  &  &  &  &  &                          &  \\
     &                          &  &  &  &                          &  &  &  &  &  &  &  & \cellcolor[HTML]{333333} & 
 \end{tabular}
-\caption{Illustration of sprite XOR-ing, transforming an 8 (left) into a 0 (right), VF is set in this case to 1}
+\caption{Illustration of sprite XOR-ing, transforming an 8 (left) into a 0 (right), VF is set in this case to 1. The + sign is not part of the sprite.}
 \end{table}
 
-\par The machine also has two timers, called the delay and sound timer, respectivelly. They both tick down at a rate of 60hz, and when the sound timer is non-zero, a sound is played. The specifics of the sound are not specifically defined, so it is left up to the developer of the emulator to implement however they want, the most preffered way of implementing it is by making it be a buzzer.
+\par The CHIP-8 virtual machine includes two timers: the delay timer and the sound timer. Both decrement at a fixed rate of 60 Hz. While the delay timer is typically used for timing-related logic within programs, the sound timer serves as an audio trigger. When the sound timer holds a non-zero value, it indicates that a sound should be produced.
 
-\clearpage
+\par The exact characteristics of the sound are not formally specified in the original CHIP-8 documentation, leaving its implementation to the discretion of the emulator developer. The most commonly adopted convention is to emulate the sound as a simple buzzer tone, consistent with the limitations of the original hardware.
 
 \subsubsection{Input}
 
-\par Input is done with a 16-key keyboard, with keys having values from 0 to F, an usual input mapping to modern hardware being done like so:
+\par Input on the CHIP-8 system is handled via a hexadecimal keypad consisting of 16 keys, labeled with values ranging from 0 to F.
+
+\par A common convention is to arrange the keys in a 4 by 4 grid that mirrors the original layout, allowing intuitive input translation between physical keyboards and the virtual machine environment, like so:
 
 \begin{table}[H]
 \centering
@@ -157,20 +163,26 @@ FX55 & LD [I], Vx & Store registers V0 through Vx in memory starting at location
 FX65 & LD Vx, [I] & Read registers V0 through Vx from memory starting at location I. \\
 \end{longtable}
 
-\par The original CHIP8 implementation featured 35 instructions, of which only 31 were initially documented in the specification as opcodes 8XY3, 8XY6, 8XY7 and 8XYE were not mentioned.
+\par The original CHIP-8 implementation supported a total of 35 instructions, although only 31 were explicitly documented in the initial specification. Notably, opcodes such as \texttt{8XY3}, \texttt{8XY6}, \texttt{8XY7}, and \texttt{8XYE} were omitted from the formal documentation.
 
-\par This is probably because all of the 8000 opcodes were part of the original CPU, the 1802's Arithmetic Logic Unit and thus were not intended to be part of the instruction set as they were not part of the interpreter itself.
+\par This omission is likely attributable to the historical context of CHIP-8’s design, which was implemented atop the RCA 1802 microprocessor. The \texttt{8XY*} instruction group closely mirrors operations available in the 1802’s Arithmetic Logic Unit (ALU), suggesting that these opcodes may have originated from the hardware's native capabilities rather than being explicitly defined by the CHIP-8 interpreter itself.
 
-\par Future extensions will add and modify the way in which these functions operate, such as in the case of instruction FX55 and FX65 which modify the I register by incrementing it for each copied byte, while the SCHIP extensions does not do that.
-
-\clearpage
+\par Subsequent extensions to the CHIP-8 instruction set, such as those introduced in SCHIP (Super CHIP) and other variants, have redefined or augmented the behavior of certain instructions. For example, instructions \texttt{FX55} and \texttt{FX65} originally incremented the index register \texttt{I} after each memory write or read, respectively. However, later implementations, including SCHIP, omit this side effect, reflecting divergence in interpretation and a lack of standardization across extensions.
 
 \section{Emulator implementation}
 \label{sec:ch3sec3}
 
-\par The main CHIP8 library, \href{https://github.com/solomonarul/cchip8}{cchip8}, has been split in several modules: the state, the interpreter and the static compiler. Only the runners require the state, nothing else depends on eachother.
+\par The core CHIP-8 library, \href{https://github.com/solomonarul/cchip8}{\texttt{cchip8}}, is organized into modular components: the state, the interpreter, and the static compiler. This architecture enforces a clear separation of concerns, where only the execution runners depend on the state module, and each module operates independently, promoting maintainability and extensibility.
 
-\par The state is responsible for handling the way in which the executor is supposed to communicate with the outside by storing fucntion pointers to user procedures and other miscellanious data, such as the registers.
+\par The state module, defined in \href{https://github.com/solomonarul/cchip8/blob/main/inc/cchip8/state.h}{\texttt{state.h}}, functions as the central interface between the emulator core and the external environment. It encapsulates the full virtual machine state as well as a set of callback function pointers that enable host-controlled behavior, such as memory access, rendering, input handling, and random number generation.
+
+\par The \texttt{chip8\_state}'s structure maintains essential CHIP-8 runtime components, including program counter (\texttt{pc}), index register (\texttt{i}), stack and stack pointer (\texttt{stack}, \texttt{sp}), 16 general-purpose registers (\texttt{v[0x10]}), timers (\texttt{dt}, \texttt{st}), display resolution parameters, and font memory addresses.
+
+\par In addition, it includes a flag \texttt{draw\_flag} for screen redraw signaling and a variable \texttt{last\_key} to track the most recently pressed key to emulate accurate behaviour for the FX0A instruction family.
+
+\par The embedded function pointers (\texttt{read\_b}, \texttt{read\_w}, \texttt{write\_b}, etc.) abstract interactions with the host system. These allow the emulator to delegate low-level operations such as I/O, drawing, screen clearing, input polling, and random number generation to external implementations, facilitating portability and customization.
+
+\par An auxiliary argument pointer (\texttt{aux\_arg}) is also provided to pass user-defined data to these callbacks, supporting more complex execution contexts when needed.
 
 \begin{minted}[
     linenos,                % add line numbers
@@ -206,7 +218,37 @@ struct chip8_state
 \subsection{Interpreter}
 \label{subsec:ch3sec3sub1}
 
-\par Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum
+\par The interpreter, as defined in \href{https://github.com/solomonarul/cchip8/blob/main/inc/cchip8/cpu/interpreter.h}{\texttt{cpu/interpreter.h}}, encapsulates a minimal runtime structure responsible for controlling instruction execution.
+
+\par The \texttt{chip8\_interpreter\_t} struct maintains three key fields: a boolean flag \texttt{running} to indicate whether the interpreter is actively executing instructions, a \texttt{long} field \texttt{timer} to track internal timing mechanisms, and a pointer \texttt{state} to the shared \texttt{chip8\_state\_t} structure, which contains the core emulator state.
+
+\par This design ensures that the interpreter remains lightweight, delegating system-wide responsibilities to the state module while managing control flow and timing locally, and such, enables the interpreter to operate independently of the underlying platform or user interface, facilitating reuse and testing.
+
+\begin{minted}[
+    linenos,                % add line numbers
+    fontfamily=tt,          % typewriter font
+    fontsize=\small,        % size
+    breaklines,             % allow line breaks
+    tabsize=4               % size of tab
+]{C}
+struct chip8_interpreter
+{
+    bool running;
+    long timer;
+    chip8_state_t* state;
+};
+typedef struct chip8_interpreter chip8_interpreter_t;
+\end{minted}
+
+\par The function \texttt{chip8\_interpreter\_step(chip8\_interpreter\_t* self)} is responsible for executing a single instruction cycle within the interpreter. It represents the core of the CHIP-8 execution loop, fetching the current instruction from memory, decoding it, and dispatching it for execution.
+
+\par Internally, instruction decoding is implemented using a large \texttt{switch} statement, a common pattern in interpreter design. The instruction opcode, 16 bits in CHIP-8, is fetched from memory using the program counter (\texttt{pc}) and then used to determine which operation to execute.
+
+\par Each \texttt{case} in the \texttt{switch} corresponds to a specific opcode or opcode pattern, allowing for structured, readable, and performant instruction handling.
+
+\par This dispatch method, while straightforward, also benefits from modern compiler optimizations that often convert large \texttt{switch} statements into jump tables, providing relatively fast execution times.
+
+\par Additionally, this layout makes it easier to maintain and extend the interpreter, as new opcodes can be added with minimal structural disruption.
 
 \subsection{Just-in-time compiler}
 \label{subsec:ch3sec3sub2}
@@ -216,13 +258,17 @@ struct chip8_state
 \section{Quirks and extensions}
 \label{sec:ch3sec4}
 
-\subsection{Modern Super CHIP8}
+\subsection{Modern Super CHIP-8}
 \label{subsec:ch3sec4sub1}
 
 \begin{minipage}{\linewidth}
 \includegraphics[width=\textwidth]{octogon_ch8}
-\captionof{figure}{Octogon by John Earnest running in \href{https://github.com/solomonarul/edra}{Edra's} modern SCHIP mode.}
+\captionof{figure}{Octogon by John Earnest running in \href{https://github.com/solomonarul/edra}{\texttt{Edra}}'s modern SCHIP mode.\\}
 \end{minipage}
+
+\par Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum
 
 \section{Testing}
 \label{sec:ch3sec5}
+
+\par Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum

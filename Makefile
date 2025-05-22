@@ -29,4 +29,4 @@ c:
 	@rm -f figures/*.pdf
 
 v:
-	@firefox --name firefox latest/main.pdfS
+	@firefox --name firefox latest/main.pdf
