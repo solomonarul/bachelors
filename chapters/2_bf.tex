@@ -1,30 +1,20 @@
 \chapter{Brainfuck}
 \label{chap:ch2}
 
-\par Brainfuck, or as it is usually shortened for academical purposes, BF, is an esoteric programming language designed to be minimalistic and intentionally difficult to program in.
+\par Brainfuck (commonly abbreviated as BF in academic literature) is an esoteric programming language created in 1993 by Swiss computer science student Urban Müller. It was conceived as a minimalist language that challenges conventional programming approaches by reducing syntactic elements to the bare essentials. The language's primary intent is not practical software development, but rather to serve as a vehicle for exploring computational theory, language design, and the boundaries of human-readable code.
 
-\par It was created in 1993 by Swiss student Urban Müller, primarily as a challenge for programmers.
+\par Brainfuck operates on a simple model of computation: a one-dimensional array (commonly 30,000 cells in most implementations) of bytes initialized to zero, and a single data pointer that traverses this memory. Loops in Brainfuck are defined by matching \texttt{[} and \texttt{]} brackets, executing the enclosed code as long as the current cell is non-zero. The language lacks named variables, functions, or high-level abstractions, requiring the programmer to construct all control flow and data manipulation manually.
 
-\par Despite its simplicity, Brainfuck is Turing-complete, meaning it has the computational power to perform any calculation that can be computed by a modern computer, given sufficient resources.
+\par Despite its extreme simplicity, Brainfuck is Turing-complete. This implies that, in theory, any computable function can be implemented using Brainfuck, provided unlimited memory and time. The Turing-completeness of Brainfuck underscores its value as a pedagogical tool, illustrating how a minimal set of operations can express arbitrarily complex computation.
 
-\par The language operates on an array of memory cells, each initially set to zero, and uses a series of eight commands to manipulate the data and control program flow.
+\par The language's deliberately obfuscated syntax forces programmers to think at the level of memory and instruction cycles, drawing parallels with low-level systems programming, particularly in assembly or machine code. This requirement to engage directly with memory manipulation and flow control makes Brainfuck a unique platform for studying program optimization, instruction translation, and interpreter design.
 
-\par Brainfuck's syntax consists of only eight commands, these being instructions to move the data pointer, modify the value of the current memory cell, input or output data, and control loops.
-
-\par The language's simplicity—combined with its deliberately difficult syntax—forces programmers to think creatively about how to implement basic operations like arithmetic or data manipulation.
-
-\par As a result, Brainfuck is more often used in programming challenges and competitions rather than for practical software development.
-
-\par The language has been made intentionally difficult to use for practical application, which has made it a popular subject of study within the community of esoteric programming languages (esolangs).
-
-\par Brainfuck often serves as an example of the power of minimalism in programming, demonstrating that even with extremely limited resources, a fully functional computational system can be constructed.
-
-\par It challenges conventional programming paradigms, as the programmer is forced to manage memory and control flow manually, akin to working in assembly or machine code.
-
-\clearpage
+\par In contemporary settings, Brainfuck is primarily used for educational and experimental purposes. It remains a popular subject in programming contests, obfuscation challenges, and academic discourse within the esoteric programming community (esolangs). Its design exemplifies the power of minimalism in programming language theory and continues to inspire discussions on language expressiveness, compiler construction, and the boundaries of syntactic design.
 
 \section{Machine specification}
 \label{sec:ch2sec1}
+
+\par The language is defined by an extremely compact instruction set consisting of only eight commands:
 
 \begin{table}[H]
 \centering
@@ -39,15 +29,14 @@
 . & Outputs the value at the current cell. \\ \hline
 , & Read a value to be placed at the current cell. \\ \hline
 \end{tabularx}
-\caption{BF commands and their descriptions}
+\caption{Brainfuck commands and their descriptions}
 \end{table}
-
-\clearpage
 
 \subsection{Programming in the language}
 \label{sec:ch2sec1sub1}
 
-\par For us to properly understand how to use the language in a useful manner, let's take a look at a sample used for printing 'Hello World!' to the screen:
+\par To facilitate a practical understanding of the Brainfuck language and its idiomatic constructs, we examine a canonical program that outputs the string 'Hello World!' to the screen:
+
 \begin{minted}[
     linenos,                % add line numbers
     fontfamily=tt,          % typewriter font
@@ -68,9 +57,9 @@
 >>>++++[<++++++++>-]<+.
 \end{minted}
 
-\par I took the liberty of splitting the code by each character that is outputted to the screen such that it can be properly observed how the language works.
+\par For clarity, the code has been formatted so that each line corresponds to the generation of a single character in the output. This organization aids in demonstrating how Brainfuck instructions directly map to output generation.
 
-\par Let's take a look at the code, line by line:
+\par Consider the first line:
 
 \begin{minted}[
     linenos,                % add line numbers
@@ -82,11 +71,11 @@
 >++++++++[<+++++++++>-]<.
 \end{minted}
 
-\par This instruction sequence sets the value of the cell at index \#1 to 8 and in a continous loop decrements that value and increments cell \#2 nine times for each decrement. Thus it sets cell \#2 to value 72, ASCII for the character 'H'.
+\par This sequence first increments the second memory cell (cell \#1) to the value 8. It then enters a loop that decrements cell \#1 on each iteration and simultaneously increments the third cell (cell \#2) by 9 per iteration. Once cell \#1 reaches zero, the loop terminates, and cell \#2 holds the value 72, corresponding to the ASCII code for 'H'. The final instruction outputs this value.
 
-\par Similar steps are done for all of the other characters except the ones that repeat multiple times, like 'l' which is printed twice by using two dot instructions in the third line, or reusing the value of 'o' from 'Hello' in 'World'.
+\par Similar patterns are applied across subsequent lines to construct the remaining characters of the phrase. Characters such as 'l', which appear multiple times, are output using consecutive . commands. The 'o' from “Hello” is reused in “World,” demonstrating efficient reuse of computed values.
 
-\par This sequence constitutes a good introduction to the matter at hand as, by coding in the language, common programming patterns can be observed such as the multiplication pattern:
+\par This example illustrates common patterns and idioms in Brainfuck programming. One foundational construct is the multiplication loop:
 
 \begin{minted}[
     linenos,                % add line numbers
@@ -95,10 +84,12 @@
     breaklines,             % allow line breaks
     tabsize=4               % size of tab
 ]{brainfuck}
-(any number of pluses)[(direction change)(any number of pluses)(reversed direction change)-]
+(any number of +)[(movement)(any number of +)(reverse movement)-]
 \end{minted}
 
-\par There are also other commonly used patterns, such as:
+\par This structure multiplies the initial value of a cell by the number of additions performed inside the loop, effectively replicating multiplication via repeated addition.
+
+\par Another fundamental idiom is the cell-clearing pattern, which resets the current cell's value to zero:
 
 \begin{minted}[
     linenos,                % add line numbers
@@ -107,10 +98,11 @@
     breaklines,             % allow line breaks
     tabsize=4               % size of tab
 ]{brainfuck}
-The cell clearing pattern, that sets a cell to 0:
 [-]
 \end{minted}
 
+\par Additionally, a commonly used construct involves transferring the value of one cell to another:
+
 \begin{minted}[
     linenos,                % add line numbers
     fontfamily=tt,          % typewriter font
@@ -118,11 +110,12 @@ The cell clearing pattern, that sets a cell to 0:
     breaklines,             % allow line breaks
     tabsize=4               % size of tab
 ]{brainfuck}
-The cell moving pattern, that moves a value to a cell relative to it:
-[(any number of moves)+(same amount of reversed moves)-]
-To be noted that this assumes initial cell value 0, if that value is not 0 it will be added instead.
-If you need it to be specifically moved, you can combine the previous clear pattern with this one.
+[(pointer movement)+(reverse pointer movement)-]
 \end{minted}
+
+\par This operation assumes that the destination cell is initially zero. If this is not the case, the original value will be added rather than overwritten. To enforce a pure move, the destination cell should be cleared first using the aforementioned clearing pattern.
+
+\par These patterns provide valuable insights into the low-level logic of Brainfuck programs and are instrumental in designing interpreters or optimizing compilers targeting esoteric or constrained instruction sets.
 
 \clearpage
 
@@ -140,7 +133,7 @@ If you need it to be specifically moved, you can combine the previous clear patt
 \subsection{Simple interpreter}
 \label{sec:ch2sec2sub2}
 
-\par Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum
+\par A basic Brainfuck interpreter operates by sequentially reading each character of the source code and executing the corresponding operation against a simulated memory model. The interpreter typically maintains a data array—commonly 30,000 bytes in size—initialized to zero, along with a data pointer that tracks the current cell. As the interpreter parses the code, it translates each command into its respective behavior: incrementing or decrementing the cell's value (+ or -), moving the data pointer left or right (< or >), reading input (,), or writing output (.). Control flow constructs ([ and ]) are implemented by jumping to the corresponding matching bracket based on the current cell's value. If the cell is zero at [, execution jumps forward to the instruction following the matching ]; otherwise, it continues normally. Similarly, ] causes a backward jump to the matching [ if the current cell is non-zero. To efficiently support these jumps, the interpreter often preprocesses the source code to map matching bracket pairs. The simplicity of this execution model makes Brainfuck interpreters ideal for illustrating core principles of language interpretation, including parsing, memory management, and flow control.
 
 \subsection{Static compilation}
 \label{sec:ch2sec2sub3}
