@@ -41,19 +41,26 @@ ABSTRACT
 \vspace{0.5cm}	
 \hrule
 \vspace{0.5cm}
-\par This thesis explores foundational software emulation techniques, with a particular focus on interpretation and just-in-time (JIT) compilation. The objective is to examine the trade-offs between these approaches in terms of performance and implementation complexity, thereby offering a comprehensive introduction to emulator design.
 
-\par To evaluate these techniques in a controlled and educational context, interpreters and JIT compilers were implemented for two minimalistic and well-documented languages: Brainfuck and CHIP-8. These languages were selected due to their simplicity, which enables the study to center on emulator behavior rather than language-specific intricacies.
+\par This thesis explores foundational software emulation techniques, with a particular focus on interpretation and just-in-time (JIT) compilation. The objective is to examine the trade-offs between these approaches in terms of performance and implementation complexity, 
 
-\par The analysis includes performance benchmarking, implementation complexity, and the impact of selected optimizations such as instruction folding, jump precalculation, hot loop replacement, and efficient register allocation. Empirical results demonstrate that JIT compilation significantly outperforms interpretation, particularly for longer-running programs, primarily due to reduced instruction-fetching and decoding overhead.
+\par To evaluate these techniques in a controlled and educational context, interpreters and JIT compilers were implemented for two minimalistic and well-documented languages, especially well suited to beginners in emulation and thereby offering a comprehensive introduction to emulator design: \textit{Brainfuck and CHIP-8}. They have been selected due to their simplicity, which enables the study to center on emulator behavior rather than language-specific intricacies.
 
-\par However, the study also highlights diminishing returns from aggressive optimization strategies. For instance, excessive hot loop replacement eventually leads to scenarios where entire programs are reduced to singular instructions, limiting further gains. Additionally, some code replacements were found to generate equivalent machine code to the original instruction sequences, rendering the optimization ineffective while increasing code complexity.
+\par The paper's analysis includes performance benchmarking, implementation complexity, and the impact of a selection of optimizations such as instruction folding, jump precalculation, hot loop replacement, and efficient register allocation in the case of JITs. Empirical results also demonstrate that JIT compilation significantly outperforms interpretation, particularly for longer-running programs, primarily due to reduced instruction-fetching and decoding overhead.
 
-\par These findings underscore the balance between simplicity and performance in emulator design and aim to offer accessible insights for readers new to emulation concepts, particularly those engaged in experimental or hobbyist development with languages like Brainfuck and CHIP-8.
+\par However, the study also highlights diminishing returns from aggressive optimization strategies such as excessive hot loop replacement which eventually leads to scenarios where entire programs are reduced to singular instructions, limiting further gains. Additionally, some code replacements were found to generate equivalent machine code to the original instruction sequences, rendering the optimization ineffective while increasing code complexity.
 
-\par \textit{Note: Some of the paper's content has been rewritten and refined to enhance academic clarity and tone by an AI language model. All of the ideas and their implementations have been originally thought of and implemented by the author.}
+\par These findings underscore the balance between simplicity and performance, while aiming to offer accessible insights for readers new to emulation concepts, particularly those engaged in experimental or hobbyist development with languages like the two selected languages.
 
-\par \textbf{Keywords}: software emulation, interpretation, JIT compilation, Brainfuck, CHIP-8, performance analysis, optimization techniques
+\par All components discussed have been implemented within a dedicated \textit{C} application, whose architectural design and implementation details are thoroughly documented and analyzed. This practical framework serves to illustrate the theoretical concepts presented, providing a concrete basis for understanding the trade-offs and design decisions inherent in emulator development.
+
+\vspace{0.5em}
+
+\textit{Note: Some of the paper's content has been rewritten and refined to enhance academic clarity and tone by an AI language model. All of the ideas and their implementations have been originally thought of and implemented by the author.}
+
+\vspace{0.5em}
+
+\textbf{Keywords}: software emulation, interpretation, JIT compilation, Brainfuck, CHIP-8, C, performance analysis, optimization techniques
 
 % Table of contents.
 \tableofcontents

@@ -3,13 +3,13 @@
 
 \par Brainfuck (commonly abbreviated as BF in academic literature) is an esoteric programming language created in 1993 by Swiss computer science student Urban Müller. It was conceived as a minimalist language that challenges conventional programming approaches by reducing syntactic elements to the bare essentials. The language's primary intent is not practical software development, but rather to serve as a vehicle for exploring computational theory, language design, and the boundaries of human-readable code.
 
-\par Brainfuck operates on a simple model of computation: a one-dimensional array (commonly 30,000 cells in most implementations, 65535 in this implementation, which aligns with the maximum addressable range of a 16-bit register) of bytes initialized to zero, and a single data pointer that traverses this memory. Loops in Brainfuck are defined by matching \texttt{[} and \texttt{]} brackets, executing the enclosed code as long as the current cell is non-zero. The language lacks named variables, functions, or high-level abstractions, requiring the programmer to construct all control flow and data manipulation manually.
+\par Brainfuck operates on a simple model of computation: a one-dimensional array of values initialized to zero, and a single data pointer that traverses this memory. Loops in Brainfuck are defined by matching \texttt{[} and \texttt{]} brackets, executing the enclosed code as long as the current cell is non-zero. The language lacks named variables, functions, or high-level abstractions, requiring the programmer to construct all control flow and data manipulation manually.
 
-\par Despite its extreme simplicity, Brainfuck is Turing-complete. This implies that, in theory, any computable function can be implemented using Brainfuck, provided unlimited memory and time. The Turing-completeness of Brainfuck underscores its value as a pedagogical tool, illustrating how a minimal set of operations can express arbitrarily complex computation.
+\par Despite its extreme simplicity, Brainfuck is Turing-complete. This implies that, in theory, any computable function can be implemented using Brainfuck, provided unlimited memory and time. The Turing-completeness of Brainfuck underscores its value as a pedagogical tool, illustrating how a minimal set of operations can express any arbitrarily complex computation.
 
 \par The language's deliberately obfuscated syntax forces programmers to think at the level of memory and instruction cycles, drawing parallels with low-level systems programming, particularly in assembly or machine code. This requirement to engage directly with memory manipulation and flow control makes Brainfuck a unique platform for studying program optimization, instruction translation, and interpreter design.
 
-\par In contemporary settings, Brainfuck is primarily used for educational and experimental purposes. It remains a popular subject in programming contests, obfuscation challenges, and academic discourse within the esoteric programming community (esolangs). Its design exemplifies the power of minimalism in programming language theory and continues to inspire discussions on language expressiveness, compiler construction, and the boundaries of syntactic design.
+\par In contemporary settings, Brainfuck is primarily used for educational and experimental purposes. It remains a popular subject in programming contests, obfuscation challenges, and academic discourse within the esoteric programming language (esolang) community. Its design exemplifies the power of minimalism in programming language theory and continues to inspire discussions on language expressiveness, compiler construction, and the boundaries of syntactic design.
 
 \section{Machine specification}
 \label{sec:ch2sec1}
@@ -32,10 +32,12 @@
 \caption{Brainfuck commands and their descriptions}
 \end{table}
 
+\par The size and number of memory cells in the language are not strictly defined and are typically left to the discretion of the programmer. In the context of this implementation, a memory model consisting of \textit{65,536} cells was adopted (corresponding to the addressable range of a 16-bit pointer) with each cell represented as an unsigned 8-bit value.
+
 \subsection{Programming in the language}
 \label{sec:ch2sec1sub1}
 
-\par To facilitate a practical understanding of the Brainfuck language and its idiomatic constructs, we examine a canonical program that outputs the string 'Hello World!' to the screen:
+\par To facilitate a practical understanding of the Brainfuck language and its idiomatic constructs, let's examine a well known instruction sequence that outputs the string \textit{'Hello World!'} to the screen:
 
 \begin{minted}[
     linenos,                % add line numbers
@@ -73,7 +75,7 @@
 
 \par This sequence first increments the second memory cell (cell \#1) to the value 8. It then enters a loop that decrements cell \#1 on each iteration and simultaneously increments the third cell (cell \#2) by 9 per iteration. Once cell \#1 reaches zero, the loop terminates, and cell \#2 holds the value 72, corresponding to the ASCII code for 'H'. The final instruction outputs this value.
 
-\par Similar patterns are applied across subsequent lines to construct the remaining characters of the phrase. Characters such as 'l', which appear multiple times, are output using consecutive . commands. The 'o' from “Hello” is reused in “World,” demonstrating efficient reuse of computed values.
+\par Similar patterns are applied across subsequent lines to construct the remaining characters of the phrase. Characters such as \textit{'l'}, which appear multiple times, are output using consecutive \texttt{.} commands. The \textit{'o'} from \textit{"Hello"} is reused in \textit{"World"}, demonstrating efficient reuse of computed values.
 
 \par This example illustrates common patterns and idioms in Brainfuck programming. One foundational construct is the multiplication loop:
 
@@ -98,7 +100,7 @@
     breaklines,             % allow line breaks
     tabsize=4               % size of tab
 ]{brainfuck}
-[-]
+[(- or +)]
 \end{minted}
 
 \par Additionally, a commonly used construct involves transferring the value of one cell to another:
@@ -119,19 +121,15 @@
 
 \clearpage
 
+// TODO: proofread from here.
+
 \section{Emulator implementation}
 \label{sec:ch2sec2}
 
 \par Because of the language's simplicity, there have been many emulators made for it in all kinds of programming languages. As such, the focus will be put on the techniques utilised in the creation of optimized emulators rather than the emulators themselves, as they have been a rather exhausted subject.
 
-
-\subsection{Emulating yourself?}
-\label{sec:ch2sec2sub1}
-
-\par 
-
 \subsection{Simple interpreter}
-\label{sec:ch2sec2sub2}
+\label{sec:ch2sec2sub1}
 
 \par A basic Brainfuck interpreter operates by sequentially reading each character of the source code and executing the corresponding operation against a simulated memory model.
 
@@ -146,15 +144,15 @@
 \par The simplicity of this execution model makes Brainfuck interpreters ideal for illustrating core principles of language interpretation, including parsing, memory management, and flow control.
 
 \subsection{Static compilation}
-\label{sec:ch2sec2sub3}
+\label{sec:ch2sec2sub2}
 
 \subsubsection{Choosing the code emmiting library}
-\label{sec:ch2sec2sub3sec1}
+\label{sec:ch2sec2sub2sec1}
 
 \par Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum
 
 \subsubsection{GNU Lightning implementation}
-\label{sec:ch2sec2sub3sec2}
+\label{sec:ch2sec2sub2sec2}
 
 \par Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum
 
