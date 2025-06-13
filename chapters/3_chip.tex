@@ -272,14 +272,28 @@ typedef struct chip8_interpreter chip8_interpreter_t;
 
 \par The suite supports tests from the smallest subset of the instructions that could be implemented, enough for an image of the IBM logo to be displayed:
 
+\begin{longtable}{|c|l|}
+\hline
+\textbf{Opcode} & \textbf{Description} \\ \hline
+\endfirsthead
 
-    00E0 - Clear the screen
-    6xnn - Load normal register with immediate value
-    Annn - Load index register with immediate value
-    7xnn - Add immediate value to normal register
-    Dxyn - Draw sprite to screen (un-aligned)
-    1nnn - Jump
+\hline
+\textbf{Opcode} & \textbf{Description} \\ \hline
+\endhead
 
+\hline
+\endfoot
+
+\hline
+\endlastfoot
+
+00E0 & Clear the screen.                                        \\ \hline
+6XNN & Load normal register with immediate value.               \\ \hline
+ANNN & Load index register with immediate value.                \\ \hline
+7XNN & Add immediate value to normal register.                  \\ \hline
+DXYN & Draw sprite to screen (unaligned, easier to implement).  \\ \hline
+1NNN & Jump (optional, only at the end).                        \\
+\end{longtable}
 // TODO: insert images here.
 
 \par To the entire instruction set and the correct hardware timings and quirks, including the flags set by the instructions:
