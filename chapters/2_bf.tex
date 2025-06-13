@@ -3,7 +3,7 @@
 
 \par Brainfuck (commonly abbreviated as BF in academic literature) is an esoteric programming language created in 1993 by Swiss computer science student Urban Müller. It was conceived as a minimalist language that challenges conventional programming approaches by reducing syntactic elements to the bare essentials. The language's primary intent is not practical software development, but rather to serve as a vehicle for exploring computational theory, language design, and the boundaries of human-readable code.
 
-\par Brainfuck operates on a simple model of computation: a one-dimensional array (commonly 30,000 cells in most implementations) of bytes initialized to zero, and a single data pointer that traverses this memory. Loops in Brainfuck are defined by matching \texttt{[} and \texttt{]} brackets, executing the enclosed code as long as the current cell is non-zero. The language lacks named variables, functions, or high-level abstractions, requiring the programmer to construct all control flow and data manipulation manually.
+\par Brainfuck operates on a simple model of computation: a one-dimensional array (commonly 30,000 cells in most implementations, 65535 in this implementation, which aligns with the maximum addressable range of a 16-bit register) of bytes initialized to zero, and a single data pointer that traverses this memory. Loops in Brainfuck are defined by matching \texttt{[} and \texttt{]} brackets, executing the enclosed code as long as the current cell is non-zero. The language lacks named variables, functions, or high-level abstractions, requiring the programmer to construct all control flow and data manipulation manually.
 
 \par Despite its extreme simplicity, Brainfuck is Turing-complete. This implies that, in theory, any computable function can be implemented using Brainfuck, provided unlimited memory and time. The Turing-completeness of Brainfuck underscores its value as a pedagogical tool, illustrating how a minimal set of operations can express arbitrarily complex computation.
 
@@ -133,10 +133,28 @@
 \subsection{Simple interpreter}
 \label{sec:ch2sec2sub2}
 
-\par A basic Brainfuck interpreter operates by sequentially reading each character of the source code and executing the corresponding operation against a simulated memory model. The interpreter typically maintains a data array—commonly 30,000 bytes in size—initialized to zero, along with a data pointer that tracks the current cell. As the interpreter parses the code, it translates each command into its respective behavior: incrementing or decrementing the cell's value (+ or -), moving the data pointer left or right (< or >), reading input (,), or writing output (.). Control flow constructs ([ and ]) are implemented by jumping to the corresponding matching bracket based on the current cell's value. If the cell is zero at [, execution jumps forward to the instruction following the matching ]; otherwise, it continues normally. Similarly, ] causes a backward jump to the matching [ if the current cell is non-zero. To efficiently support these jumps, the interpreter often preprocesses the source code to map matching bracket pairs. The simplicity of this execution model makes Brainfuck interpreters ideal for illustrating core principles of language interpretation, including parsing, memory management, and flow control.
+\par A basic Brainfuck interpreter operates by sequentially reading each character of the source code and executing the corresponding operation against a simulated memory model.
+
+\par The interpreter typically maintains a data array, commonly 30,000 bytes in size, initialized to zero, along with a data pointer that tracks the current cell.
+
+\par As the interpreter parses the code, it translates each command into its respective behavior: incrementing or decrementing the cell's value (+ or -), moving the data pointer left or right (\textless or \textgreater), reading input (,), or writing output (.).
+
+\par The control flow constructs ([ and ]) are implemented by jumping to the corresponding matching bracket based on the current cell's value. If the cell is zero at [, execution jumps forward to the instruction following the matching ]; otherwise, it continues normally.
+
+\par Similarly, ] causes a backward jump to the matching [ if the current cell is non-zero. To efficiently support these jumps, the interpreter often preprocesses the source code to map matching bracket pairs.
+
+\par The simplicity of this execution model makes Brainfuck interpreters ideal for illustrating core principles of language interpretation, including parsing, memory management, and flow control.
 
 \subsection{Static compilation}
 \label{sec:ch2sec2sub3}
+
+\subsubsection{Choosing the code emmiting library}
+\label{sec:ch2sec2sub3sec1}
+
+\par Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum
+
+\subsubsection{GNU Lightning implementation}
+\label{sec:ch2sec2sub3sec2}
 
 \par Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum
 
@@ -145,22 +163,169 @@
 
 \par Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum
 
-\subsection{Precalculating jumps}
+\subsection{Instruction folding}
 \label{subsec:ch2sec3sec1}
 
-\par Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum
+\par A fundamental and immediate optimization in Brainfuck program analysis involves the elimination of redundant sequences of repeated instructions.
 
-\subsection{Instruction folding}
+\par Brainfuck source code often includes consecutive repetitions of basic commands, such as:
+
+\begin{minted}[
+    linenos,                % add line numbers
+    fontfamily=tt,          % typewriter font
+    fontsize=\small,        % size
+    breaklines,             % allow line breaks
+    tabsize=4               % size of tab
+]{brainfuck}
++++++++++   // Increment the current cell by 9
+>>>>>>      // Move the pointer 6 cells to the right
+\end{minted}
+
+These repetitive patterns can be consolidated to improve both interpretive efficiency and intermediate representation clarity. This observation forms the basis of the first optimization strategy.
+
+\subsubsection*{Transformation to Intermediate Representation}
+
+To address this redundancy, we introduce a simplified intermediate instruction set that aggregates repeated operations into parameterized instructions. Specifically, the following transformations are applied:
+
+\begin{itemize}
+    \item \textbf{ADD \textit{x}}: Replaces sequences of \texttt{+} and \texttt{-} instructions. The signed integer \textit{x} indicates the net change to the value at the current cell.
+    \begin{itemize}
+        \item Example: \texttt{+++++} becomes \texttt{ADD 5}, and \texttt{---} becomes \texttt{ADD -3}.
+    \end{itemize}
+
+    \item \textbf{MOV \textit{x}}: Replaces sequences of \texttt{>} and \texttt{<} instructions. The signed integer \textit{x} represents the net change to the data pointer position.
+    \begin{itemize}
+        \item Example: \texttt{>>>} becomes \texttt{MOV 3}, and \texttt{<<} becomes \texttt{MOV -2}.
+    \end{itemize}
+\end{itemize}
+
+These transformations serve two primary purposes:
+
+\begin{enumerate}
+    \item \textbf{Performance Enhancement}: Interpreters and compilers can process compact instructions more efficiently than long sequences of primitive commands.
+    \item \textbf{Readability and Analysis}: The intermediate representation is more succinct and expressive, facilitating further optimization and program analysis.
+\end{enumerate}
+
+This initial step lays the groundwork for subsequent transformations and higher-level optimizations.
+
+\subsection{Precalculating jumps}
 \label{subsec:ch2sec3sec2}
 
-\par Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum
+\par In the Brainfuck language, control flow is implemented using the loop constructs \texttt{[} and \texttt{]}, which form conditional jump instructions based on the value at the current memory cell. A naïve implementation might process these instructions dynamically by scanning forward or backward through the code to locate the corresponding matching bracket whenever a jump is needed. For example:
+
+\begin{minted}[
+    linenos,                % add line numbers
+    fontfamily=tt,          % typewriter font
+    fontsize=\small,        % size
+    breaklines,             % allow line breaks
+    tabsize=4               % size of tab
+]{brainfuck}
+[ ... ]
+\end{minted}
+
+At runtime, if the condition is met, the interpreter may search forward to find the matching \texttt{]}, or backward to locate the corresponding \texttt{[}.
+
+While functionally correct, this approach is highly inefficient, especially in programs with nested or frequent loops, as it introduces linear-time overhead on each loop entry and exit.
+
+\subsubsection*{Precomputed Jump Table Optimization}
+
+To mitigate this inefficiency, we can precalculate jump destinations during the parsing phase of the program. This transforms dynamic control flow resolution into a constant-time operation, enabling the use of a more efficient intermediate representation.
+
+The revised instruction format introduces a single unified jump operation:
+
+\begin{itemize}
+    \item \textbf{JMP \textit{x}}: Performs a conditional jump of \textit{x} instructions relative to the current position in the code.
+    \begin{itemize}
+        \item If \textit{x} is \textbf{positive}, the instruction corresponds to a \texttt{[} and is executed \textbf{only if} the value at the current memory cell is \textbf{zero}.
+        \item If \textit{x} is \textbf{negative}, the instruction corresponds to a \texttt{]} and is executed \textbf{only if} the value at the current memory cell is \textbf{non-zero}.
+    \end{itemize}
+\end{itemize}
+
+This structure allows for efficient execution by directly referencing the jump destination, avoiding the need for runtime matching of bracket pairs.
 
 \subsection{Sequence matching for common patterns}
 \label{subsec:ch2sec3sec3}
 
-\par Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum
+\par Consider the Brainfuck loop:
+
+\begin{verbatim}
+[-]
+\end{verbatim}
+
+Semantically, this loop is equivalent to setting the current memory cell to zero. It repeatedly decrements the cell until it reaches zero, and the loop exits. Despite its simplicity, the execution time of this loop is proportional to the value of the cell, which may range up to 255 (in the case of 8-bit cells). Thus, the runtime cost of this idiom can be substantial.
+
+\subsubsection*{Replacing Common Loops with Custom Instructions}
+
+To address this inefficiency, we introduce a specialized instruction into our intermediate representation:
+
+\begin{itemize}
+    \item \textbf{CLR}: Sets the value at the current memory cell to zero.
+\end{itemize}
+
+This transformation avoids executing multiple decrement operations and conditional jumps, replacing them with a single deterministic operation.
+
+\subsubsection*{Identifying Loops Worth Optimizing}
+
+Not all loops merit optimization; hence, we employ a heuristic based on dynamic profiling to identify high-frequency loops. During an initial instrumentation pass of the program, we count the number of executions of each top-level loop. Each loop is recorded with the following format:
+
+\begin{verbatim}
+PC | number of executions | sequence
+\end{verbatim}
+
+For example, in the \texttt{mandlebrot.b} program, we might observe the following raw data:
+
+\begin{verbatim}
+1   | 1     | 12j -1a 1m 2a 3m 5a 1m 2a 1m 1a -6m -10j
+20  | 15    | 3j 9m -1j
+...
+130 | 99072 | 6j -1a -6m 1a 6m -4j
+137 | 99072 | 10j -1a 6m 1a -2m 1a -3m 1a -1m -8j
+...
+\end{verbatim}
+
+While informative, this format is overly verbose and difficult to analyze manually. To facilitate analysis, an AWK script is used to condense the data by grouping equivalent loop bodies. The output is restructured as:
+
+\begin{verbatim}
+number of executions | UNIQUE sequence
+\end{verbatim}
+
+This results in a clearer summary:
+
+\begin{verbatim}
+157090277 6j -1a 9m 1a -9m -4j
+46993495  3j -1a -1j
+25555337  6j -1a -2m 1a 2m -4j
+...
+\end{verbatim}
+
+We can now observe frequent structural patterns. For instance, the pattern:
+
+\begin{verbatim}
+3j xa -1j
+\end{verbatim}
+
+(where \texttt{x} is any non-zero constant) represents any loop of the form:
+
+\begin{verbatim}
+[-]  [+]  [++++]  [---]
+\end{verbatim}
+
+Each of these is semantically equivalent to clearing the current cell. As such, they can be replaced by the custom \texttt{CLR} instruction in the intermediate representation, reducing the execution from potentially hundreds of instructions to just one.
+
+\subsubsection*{Integrating Pattern Recognition in Parsing}
+
+Our code parser operates in a stack-like fashion:
+
+\begin{enumerate}
+    \item Read the current instruction.
+    \item Determine its type.
+    \item If it differs from the top of the stack, push it as a new entry.
+    \item If it matches the type, attempt to merge or extend the existing instruction.
+\end{enumerate}
+
+To support loop pattern recognition, we extend this parsing mechanism. After each new instruction is added to the stack, the parser inspects the top of the stack for known patterns (such as \texttt{3j xa -1j}). If a match is found, the sequence is replaced with the appropriate high-level instruction, such as \texttt{CLR}. This modular approach enables further optimizations in a scalable and maintainable manner.
 
 \section{Testing}
 \label{sec:ch2sec4}
 
-\par 
+\par To ensure the reliability and correctness of the Brainfuck implementation, a suite of unit tests was developed and executed through a dedicated test harness. The testing infrastructure is organized into modular source files, each targeting distinct components of the system—state management, interpretation, and JIT compilation. The test runner initializes the testing sequence by invoking a series of focused unit tests: one that verifies the correct setup of the memory state, one that checks the fidelity of source code parsing and transformation, and others that validate the interpreter's initialization and execution logic. For builds configured with GNU Lightning support, the test suite conditionally includes one that tests the initialization of the JIT backend and one that verifies the execution of JIT-compiled code. This compartmentalized and conditional structure provides both comprehensive coverage and portability across build targets, reinforcing confidence in the system's internal consistency.
