@@ -1,4 +1,22 @@
+\clearpage
+
 \chapter{Conclusions and Future Work}
 \label{conclusions}
 
-\par Concluzii ...
+\par This thesis has systematically explored the design, implementation, and performance trade-offs between interpretation and just-in-time (JIT) compilation for software emulation, using the minimalist languages \textit{Brainfuck} and \textit{CHIP-8} as pedagogical case studies.
+
+\par The key findings demonstrate that \textit{JIT compilation consistently outperforms interpretation}, particularly for computationally intensive or long-running programs, due to the elimination of repetitive instruction fetching and decoding overhead. Empirical benchmarks revealed execution times as low as \textit{3--9\% of interpreter runtimes} for Brainfuck programs.
+
+\par Optimizations such as \textit{instruction folding}, \textit{precalculated jumps}, and \textit{hot loop replacement} proved highly effective, though diminishing returns were observed with excessive specialization. For instance, overly aggressive loop collapsing occasionally generated machine code identical to unoptimized sequences, increasing complexity without performance gains. This underscores the importance of \textit{balancing optimization effort with practical returns}, especially in constrained environments.
+
+\par The modular architecture of the final application, \textit{Edra}, successfully decoupled emulation logic (via \texttt{cbf} and \texttt{cchip8} libraries) from platform-specific I/O (using SDL3 and Clay), enabling portable CHIP-8 and Brainfuck emulation. Test validation with established suites (e.g., Timendus for CHIP-8) confirmed correctness across standard and extended specifications like SCHIP.
+
+\subsection*{Future Work}
+
+\par Several avenues merit further exploration:
+
+\begin{enumerate}
+    \item \textit{Better User Experience}: Improved GUI with program selection and configurable in-app settings.
+    \item \textit{Broader Language Support}: Extending the framework to emulate more complex architectures (e.g. 6502, Z80, etc).
+    \item \textit{More platforms supported}: Emulating game consoles / platforms that have already had their architecture reverse engineered and are openly available (e.g. Nintendo GameBoy, etc)
+\end{enumerate}

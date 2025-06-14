@@ -32,8 +32,8 @@
 \par The organization of the thesis is outlined as follows:
 
 \begin{itemize}
-    \item \textbf{Chapter 2} examines the Brainfuck programming language, focusing on its implementation through both interpretation and just-in-time (JIT) compilation, along with a comparative analysis of their respective performance characteristics.
-    \item \textbf{Chapter 3} explores the historical evolution and variations of the CHIP-8 virtual machine, detailing the implementation strategies adopted in this thesis' application.
+    \item \textbf{Chapter 2} examines the Brainfuck programming language, focusing on its implementation through both interpretation and just-in-time (JIT) compilation, along with a comparative analysis of their respective performance results.
+    \item \textbf{Chapter 3} explores the historical evolution and variations of the CHIP-8 virtual machine, detailing the implementation strategies adopted.
     \item \textbf{Chapter 4} provides an in-depth analysis of the modular architecture of the main application, describing the integration and interaction of its components and the rationale behind key design decisions.
     \item \textbf{Chapter 5} summarizes the core findings of the study, discusses its limitations, and proposes potential directions for future research and development in the field of software emulation.
 \end{itemize}
@@ -41,43 +41,10 @@
 \section{Related work}
 \label{chap:ch1sec2}
 
-\par CHIP-8 Applications in engineering \cite{Chip8Applications2019}.
-Brainfuck in reinforcement learning \cite{BFReinforcementLearining2022}.
-Esoteric languages list with BF in it \cite{BFEsolang2015}.
-Brainfuck conceputal \cite{BFConceptual2017}.
-Brainfuck hardware \cite{BFHardware2016}.
-Brainfuck self interpreter \cite{BFSelfInterpreter2003}.
+\par The programming languages analyzed in this study, have seen limited engagement in academic literature, likely due to Brainfuck's intentionally provocative nomenclature and CHIP-8's roots in hobbyist computing, far from academia.
 
-\begin{figure}[htbp]
-	\centering
-		\includegraphics[scale=0.65]{./figures/fig_3_1.eps}
-	\caption{Ciclul de dezvoltare al sistemelor bazate pe componente adaptat modelului cascadã}
-	\label{FigCBSD}
-\end{figure}
+\par Nevertheless, both languages have found specific applications in research and education. CHIP-8 has been employed as an instructional tool for teaching computer architecture and virtual machine concepts in undergraduate curricula, demonstrating its relevance in contemporary pedagogy despite its retro origins \cite{Chip8Applications2019}.
 
-Inserarea și Referirea la Tabelul \ref{TabelSolutii}. 
+\par Brainfuck, on the other hand, has appeared in more niche academic contexts. It has been discussed in the broader framework of esoteric and conceptual programming languages \cite{BFEsolang2015, BFConceptual2017}, explored in parallel hardware design implementations \cite{BFHardware2016}, used in preliminary studies on self-interpreting languages \cite{BFSelfInterpreter2003}, and even utilized as a domain for reinforcement learning in program synthesis and compiler fuzzing research \cite{BFReinforcementLearining2022}.
 
-\begin{table}[htbp]
-\begin{center}
-\begin{tabular}
-{|p{120pt}|p{120pt}|p{120pt}|}
-\hline
- Nume algoritm  &  Toate soluțiile &  Soluția optimã\\
-\hline 
-\hline Nume 1 & $20$ & $5$  \\
-\hline Nume 2 & $20$ & $2$  \\
-\hline
-\end{tabular}
-\end{center}
-\caption{Soluții obținute }
-\label{TabelSolutii}
-\end{table}
-
-
-Adaugarea și Referirea la o Ecuație \ref{LabelMyEquation}.
-
-
- \begin{equation}
-     ws_N4 = w_{14}*N1 + W_{24}+N2 + w_{34}*N3
-\label{LabelMyEquation}
- \end{equation}
+\par These contributions, while scattered, highlight the potential of these languages as compact and expressive models for exploring core principles in interpretation, compilation, and system design.

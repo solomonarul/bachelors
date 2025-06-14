@@ -110,7 +110,7 @@ Z & X & C & V \\ \hline
 \caption{Commonly used layout on modern keyboards}
 \end{table}
 
-\subsubsection{Instructions}
+\subsubsection{Instructions \cite{CHIP8Gulrak}}
 
 \begin{longtable}{|c|c|p{9cm}|}
 \hline
@@ -217,8 +217,6 @@ struct chip8_state
 };
 \end{minted}
 
-\clearpage
-
 \subsection{Interpreter}
 \label{subsec:ch3sec3sub1}
 
@@ -269,7 +267,7 @@ typedef struct chip8_interpreter
 
 \par The most notable addition is the expansion of the display resolution from \texttt{64x32} pixels to \texttt{128x64} pixels, enabling more detailed graphics.
 
-\par SCHIP also introduces a set of extended instructions, particularly for drawing and scrolling operations, as well as instructions to modify the behavior of the display or interpreter.
+\par SCHIP also introduces a set of extended instructions\cite{CHIP8Gulrak}, particularly for drawing and scrolling operations, as well as instructions to modify the behavior of the display or interpreter, the ones implemented in \href{https://github.com/solomonarul/edra}{\texttt{Edra}} are as follows:
 
 \begin{longtable}{|c|p{10cm}|}
 \hline
