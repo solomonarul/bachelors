@@ -1,3 +1,5 @@
+\clearpage
+
 \chapter{CHIP-8}
 \label{chap:ch3}
 
@@ -13,7 +15,7 @@
 \vspace{1cm}
 
 \begin{minipage}{\linewidth}
-\includegraphics[width=\textwidth]{tetris_ch8}
+\includegraphics[width=\textwidth]{ch8/tetris}
 \captionof{figure}{Tetris clone written in CHIP-8 by Fran Dachille in 1991 running in \href{https://github.com/solomonarul/edra}{\texttt{Edra}}.}
 \end{minipage}
 
@@ -215,16 +217,14 @@ struct chip8_state
 };
 \end{minted}
 
-// TODO: proofread from here.
+\clearpage
 
 \subsection{Interpreter}
 \label{subsec:ch3sec3sub1}
 
 \par The interpreter, as defined in \href{https://github.com/solomonarul/cchip8/blob/main/inc/cchip8/cpu/interpreter.h}{\texttt{cpu/interpreter.h}}, encapsulates a minimal runtime structure responsible for controlling instruction execution.
 
-\par The \texttt{chip8\_interpreter\_t} struct maintains three key fields: a boolean flag \texttt{running} to indicate whether the interpreter is actively executing instructions, a \texttt{long} field \texttt{timer} to track internal timing mechanisms, and a pointer \texttt{state} to the shared \texttt{chip8\_state\_t} structure, which contains the core emulator state.
-
-\par This design ensures that the interpreter remains lightweight, delegating system-wide responsibilities to the state module while managing control flow and timing locally, and such, enables the interpreter to operate independently of the underlying platform or user interface, facilitating reuse and testing.
+\par The \texttt{chip8\_interpreter\_t} struct maintains three key fields: a boolean flag \texttt{running} to indicate whether the interpreter is actively executing instructions, a \texttt{long} field \texttt{timer} to track internal timing mechanisms, and a pointer \texttt{state} to the shared \texttt{chip8\_state\_t} structure, which contains the core emulator state, mentioned above.
 
 \begin{minted}[
     linenos,                % add line numbers
@@ -233,18 +233,19 @@ struct chip8_state
     breaklines,             % allow line breaks
     tabsize=4               % size of tab
 ]{C}
-struct chip8_interpreter
+typedef struct chip8_interpreter
 {
     bool running;
     long timer;
     chip8_state_t* state;
-};
-typedef struct chip8_interpreter chip8_interpreter_t;
+} chip8_interpreter_t;
 \end{minted}
 
-\par The function \texttt{chip8\_interpreter\_step(chip8\_interpreter\_t* self)} is responsible for executing a single instruction cycle within the interpreter. It represents the core of the CHIP-8 execution loop, fetching the current instruction from memory, decoding it, and dispatching it for execution.
+\par This design ensures that the interpreter remains lightweight, delegating system-wide responsibilities to the state module while managing control flow and timing locally, and such, enables the interpreter to operate independently of the underlying platform or user interface, facilitating reuse and testing.
 
-\par Internally, instruction decoding is implemented using a large \texttt{switch} statement, a common pattern in interpreter design. The instruction opcode, 16 bits in CHIP-8, is fetched from memory using the program counter (\texttt{pc}) and then used to determine which operation to execute.
+\par The main function \texttt{chip8\_interpreter\_step(chip8\_interpreter\_t* self)} is responsible for executing a single instruction cycle within the interpreter. It represents the core of the CHIP-8 execution loop, fetching the current instruction from memory, decoding it, and dispatching it for execution.
+
+\par Internally, instruction decoding is implemented using a large \texttt{switch} statement, a common pattern in interpreter design, especially for simpler architectures. The instruction opcode, 16 bits in CHIP-8, is fetched from memory using the program counter (\texttt{pc}) and then used to determine which operation to execute.
 
 \par Each \texttt{case} in the \texttt{switch} corresponds to a specific opcode or opcode pattern, allowing for structured, readable, and performant instruction handling.
 
@@ -259,11 +260,42 @@ typedef struct chip8_interpreter chip8_interpreter_t;
 \label{subsec:ch3sec4sub1}
 
 \begin{minipage}{\linewidth}
-\includegraphics[width=\textwidth]{octogon_ch8}
+\includegraphics[width=\textwidth]{ch8/octogon}
+\centering
 \captionof{figure}{Octogon by John Earnest running in \href{https://github.com/solomonarul/edra}{\texttt{Edra}}'s modern SCHIP mode.\\}
 \end{minipage}
 
-\par Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum
+\par The Super-CHIP (SCHIP) extension, introduced by Erik Bryntse in the 1990s, builds upon the original CHIP-8 virtual machine to enhance its graphical capabilities and improve overall program flexibility.
+
+\par The most notable addition is the expansion of the display resolution from \texttt{64x32} pixels to \texttt{128x64} pixels, enabling more detailed graphics.
+
+\par SCHIP also introduces a set of extended instructions, particularly for drawing and scrolling operations, as well as instructions to modify the behavior of the display or interpreter.
+
+\begin{longtable}{|c|p{10cm}|}
+\hline
+\textbf{Opcode} & \textbf{Description} \\
+\hline
+\endfirsthead
+
+\hline
+\textbf{Opcode} & \textbf{Description} \\
+\hline
+\endhead
+
+\hline
+\endfoot
+
+\hline
+\endlastfoot
+
+00CN & Scroll display down by \texttt{n} pixels. \\
+00FB & Scroll display right by 4 pixels. \\
+00FC & Scroll display left by 4 pixels. \\
+00FD & Exit the interpreter (halt). \\
+00FE & Enable low-resolution mode (64x32). \\
+00FF & Enable high-resolution mode (128x64). \\
+DXY0 & Draw 16x16 sprite in high-resolution mode. In low-res mode, behaves like standard DXYN. \\
+\end{longtable}
 
 \section{Testing}
 \label{sec:ch3sec5}
@@ -294,12 +326,37 @@ ANNN & Load index register with immediate value.                \\ \hline
 DXYN & Draw sprite to screen (unaligned, easier to implement).  \\ \hline
 1NNN & Jump (optional, only at the end).                        \\
 \end{longtable}
-// TODO: insert images here.
 
-\par To the entire instruction set and the correct hardware timings and quirks, including the flags set by the instructions:
+\begin{minipage}{\linewidth}
+\includegraphics[width=\textwidth]{ch8/ibm}
+\centering
+\captionof{figure}{The IBM logo display running in \href{https://github.com/solomonarul/edra}{\texttt{Edra}} showing the correct result.\\}
+\end{minipage}
 
-// TODO: insert images here.
+\clearpage
 
-\par These tests have been ran manually in all possible configurations to make sure the emulator is behaving as expected, even in modern SCHIP mode.
+\par To the entire instruction set and the correct hardware timings and quirks, including the flags set by the instructions:\\
 
-// TODO: insert images here.
+\begin{minipage}{\linewidth}
+\includegraphics[width=\textwidth]{ch8/corax}
+\end{minipage}
+
+\begin{minipage}{\linewidth}
+\includegraphics[width=\textwidth]{ch8/flags}
+\centering
+\captionof{figure}{The Corax+ opcode and the flags tests running in \href{https://github.com/solomonarul/edra}{\texttt{Edra}} showing the correct result.\\}
+\end{minipage}
+
+\clearpage
+
+\par These tests have been ran manually in all possible configurations to make sure the emulator is behaving as expected, even in modern SCHIP mode.\\
+
+\begin{minipage}{\linewidth}
+\includegraphics[width=\textwidth]{ch8/quirks-normal}
+\end{minipage}
+
+\begin{minipage}{\linewidth}
+\includegraphics[width=\textwidth]{ch8/quirks-schip}
+\centering
+\captionof{figure}{The quirks test, normal CHIP8 and modern SCHIP variants running in \href{https://github.com/solomonarul/edra}{\texttt{Edra}} showing the correct result for each of the respective platforms. \\}
+\end{minipage}
