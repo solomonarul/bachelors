@@ -131,15 +131,15 @@
 
 \par A basic Brainfuck interpreter functions by sequentially parsing each character of the input program and executing the corresponding operation on a simulated memory model.
 
-\par This model typically comprises a data array, initialized to zero, alongside a data pointer that tracks the currently active cell. As the interpreter reads the source code, it maps each command to a specific operation: incrementing or decrementing the cell's value (+ or -), shifting the data pointer left or right (< or >), reading a byte of input (,), or outputting the current cell's value (.).
+\par This model typically comprises a data array, initialized to zero, alongside a data pointer that tracks the currently active cell. As the interpreter reads the source code, it maps each command to a specific operation: incrementing or decrementing the cell's value (\texttt{+} or \texttt{-}), shifting the data pointer left or right (\texttt{\textless} or \texttt{\textgreater}), reading a byte of input (\texttt{,}), or outputting the current cell's value (\texttt{.}).
 
-\par Control flow in Brainfuck is handled through loop constructs denoted by the [ and ] characters. When encountering a [ symbol, the interpreter checks the value of the current cell. If the value is zero, execution jumps forward to the instruction immediately following the corresponding closing bracket ]. Conversely, when a ] is reached and the current cell is non-zero, execution jumps backward to the matching opening bracket [.
+\par Control flow in Brainfuck is handled through loop constructs denoted by the \texttt{[} and \texttt{]} characters. When encountering a \texttt{[} symbol, the interpreter checks the value of the current cell. If the value is zero, execution jumps forward to the instruction immediately following the corresponding closing bracket \texttt{]}. Conversely, when a \texttt{]} is reached and the current cell is non-zero, execution jumps backward to the matching opening bracket \texttt{[}.
 
 \par To enable efficient execution of these control flow constructs, the interpreter usually performs a preprocessing step that generates a mapping between matching bracket pairs, allowing for constant-time jumps during interpretation.
 
 \par The entire execution logic is structured as a large \texttt{switch}-based dispatch mechanism, which simplifies the implementation and provides a modular structure that facilitates later extensions, particularly in the context of optimization.
 
-\par Preliminary performance evaluations for this execution model indicate the following average times after \textit{5} runs:
+\par Preliminary performance evaluations for this execution model indicate the following times in Table~\ref{tab:bench1}:
 
 \begin{longtable}{|l|c|c|}
 \hline
@@ -155,17 +155,22 @@
 \hline
 \endfoot
 
-\hline
 \endlastfoot
 
 mandlebrot.b  & 11452  & 121035        \\
 hanoi.b       & 53885  & 92000         \\
-alphabet.b    & 186    & 8000          \\
-squares.b     & 197    & 18.7          \\
-sierpinski.b  & 125    & 3.7           \\
+alphabet.b \ref{chap:alphabetannex}    & 186    & 8000          \\
+squares.b \ref{chap:squaresannex}     & 197    & 18.7          \\
+sierpinski.b \ref{chap:sierpinskiannex} & 125    & 3.7           \\
+
+\hline
 \end{longtable}
 
-\par Higher times have been rounded as the error is small enough to be negligible.
+\vspace{-1em}
+\captionof{table}{Rounded execution times for the interpreter after \textit{5} runs.}
+\label{tab:bench1}
+
+\clearpage
 
 \subsection{Static compilation}
 \label{sec:ch2sec2sub2}
@@ -196,7 +201,7 @@ sierpinski.b  & 125    & 3.7           \\
 
 \par Register usage is explicit, relying on general-purpose virtual registers (\textit{JIT\_R0} and \textit{JIT\_R1}) and pointer management through \textit{JIT\_V0}, which holds the memory base.
 
-\par The JIT state is finalized with a prolog and epilog, and the emitted function pointer is stored for later execution. 
+\par The JIT state is finalized with a prolog and epilog, and the emitted function pointer is stored for later execution. The speed inprovement of this is shown in Table~\ref{tab:bench2}.
 
 \begin{longtable}{|l|c|c|c|}
 \hline
@@ -212,17 +217,19 @@ sierpinski.b  & 125    & 3.7           \\
 \hline
 \endfoot
 
-\hline
 \endlastfoot
 
-mandlebrot.b  & 11452 & 3800          & 3.13\% \\
-hanoi.b       & 53885 & 4830          & 5.25\% \\
-alphabet.b    & 186   & 745           & 9.31\% \\
-squares.b     & 197   & 0.99          & 5.29\% \\
-sierpinski.b  & 125   & 0.25          & 6.75\% \\
+mandlebrot.b  & 11452 & 3800  & 3.13\% \\
+hanoi.b       & 53885 & 4830  & 5.25\% \\
+alphabet.b \ref{chap:alphabetannex}    & 186   & 745   & 9.31\% \\
+squares.b \ref{chap:squaresannex}    & 197   & 0.99  & 5.29\% \\
+sierpinski.b \ref{chap:sierpinskiannex} & 125   & 0.25  & 6.75\% \\
+\hline
 \end{longtable}
 
-\par A big reduction in execution time can be already observed, but there's still a lot of room for improvements to be done.
+\vspace{-1em}
+\captionof{table}{Rounded JIT execution times and relative performance after \textit{5} runs.}
+\label{tab:bench2}
 
 \section{Applying optimizations}
 \label{sec:ch2sec3}
@@ -370,7 +377,7 @@ number of executions | sequence
 \hline
 \endfoot
 mandlebrot.b & 2915  & 14390 & 1326.26\% & 11.89\% \\
-alphabet.b   & 80    & 1177  & 3138.66\% & 14.72\% \\
+alphabet.b \ref{chap:alphabetannex}   & 80    & 1177  & 3138.66\% & 14.72\% \\
 hanoi.b      & 9830  & 1010  & 2927.55\% & 1.10\% \\
 \hline
 \end{longtable}
@@ -387,7 +394,7 @@ hanoi.b      & 9830  & 1010  & 2927.55\% & 1.10\% \\
 \hline
 \endfoot
 mandlebrot.b & 2915  & 1085   & 7.53\%  & 28.55\% \\
-alphabet.b   & 80    & 37.5   & 3.19\%  & 5.03\% \\
+alphabet.b \ref{chap:alphabetannex}   & 80    & 37.5   & 3.19\%  & 5.03\% \\
 hanoi.b      & 9830  & 34.5   & 3.42\%  & 0.715\% \\
 \hline
 \end{longtable}
@@ -397,6 +404,6 @@ hanoi.b      & 9830  & 34.5   & 3.42\%  & 0.715\% \\
 \section{Testing}
 \label{sec:ch2sec4}
 
-\par The test runner initializes the testing sequence by invoking a series of focused unit tests: one that verifies the correct setup of the memory state, one that checks the fidelity of source code parsing and transformation, and others that validate the interpreter's initialization and execution logic.
+\par The unit test assures that the application executes Brainfuck code correctly by invoking a series of focused unit tests: one that verifies the correct setup of the memory state, one that checks the fidelity of source code parsing and transformation, and others that validate the interpreter's initialization and execution logic.
 
-\par For builds configured with \textit{GNU Lightning} support, the test suite conditionally includes one that tests the initialization of the JIT backend and one that verifies the execution of JIT-compiled code.
+\par For builds configured with \textit{GNU Lightning} support, the test suite conditionally includes one that tests the initialization of the JIT backend and one that verifies the execution of JIT-compiled code using results from the source parsing.

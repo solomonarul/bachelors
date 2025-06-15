@@ -1,0 +1,65 @@
+\clearpage
+
+\chapter{Annexes}
+\label{chap:ch6}
+
+\label{chap:alphabetannex}
+\subsection*{Original \texttt{alphabet.b} source code}
+
+\begin{minted}[
+    linenos,                % add line numbers
+    fontfamily=tt,          % typewriter font
+    fontsize=\small,        % size
+    breaklines,             % allow line breaks
+    tabsize=4               % size of tab
+]{brainfuck}
+>++[<+++++++++++++>-]<[[>+>+<<-]>[<+>-]++++++++
+[>++++++++<-]>.[-]<<>++++++++++[>++++++++++[>++
+++++++++[>++++++++++[>++++++++++[>++++++++++[>+
++++++++++[-]<-]<-]<-]<-]<-]<-]<-]++++++++++.
+\end{minted}
+
+\label{chap:squaresannex}
+\subsection*{Original \texttt{squares.b} source code}
+
+\begin{minted}[
+    linenos,                % add line numbers
+    fontfamily=tt,          % typewriter font
+    fontsize=\small,        % size
+    breaklines,             % allow line breaks
+    tabsize=4               % size of tab
+]{brainfuck}
+++++[>+++++<-]>[<+++++>-]+<+[
+    >[>+>+<<-]++>>[<<+>>-]>>>[-]++>[-]+
+    >>>+[[-]++++++>>>]<<<[[<++++++++<++>>-]+<.<[>----<-]<]
+    <<[>>>>>[>>>[-]+++++++++<[>-<-]+++++++++>[-[<->-]+[<<<]]
+    <[>+<-]>]<<-]<<-
+]
+[Outputs square numbers from 0 to 10000.
+Daniel B Cristofani (cristofdathevanetdotcom)
+http://www.hevanet.com/cristofd/brainfuck/]
+\end{minted}
+
+\label{chap:sierpinskiannex}
+\subsection*{Original \texttt{sierpinski.b} source code}
+
+\begin{minted}[
+    linenos,                % add line numbers
+    fontfamily=tt,          % typewriter font
+    fontsize=\small,        % size
+    breaklines,             % allow line breaks
+    tabsize=4               % size of tab
+]{brainfuck}
+[sierpinski.b -- display Sierpinski triangle
+(c) 2016 Daniel B. Cristofani
+http://brainfuck.org/]
+
+++++++++[>+>++++<<-]>++>>+<[-[>>+<<-]+>>]>+[
+    -<<<[
+        ->[+[-]+>++>>>-<<]<[<]>>++++++[<<+++++>>-]+<<++.[-]<<
+    ]>.>+[>>]>+
+]
+
+[Shows an ASCII representation of the Sierpinski triangle
+(iteration 5).]
+\end{minted}

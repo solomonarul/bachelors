@@ -9,7 +9,7 @@
 
 \par Optimizations such as \textit{instruction folding}, \textit{precalculated jumps}, and \textit{hot loop replacement} proved highly effective, though diminishing returns were observed with excessive specialization. For instance, overly aggressive loop collapsing occasionally generated machine code identical to unoptimized sequences, increasing complexity without performance gains. This underscores the importance of \textit{balancing optimization effort with practical returns}, especially in constrained environments.
 
-\par The modular architecture of the final application, \textit{Edra}, successfully decoupled emulation logic (via \texttt{cbf} and \texttt{cchip8} libraries) from platform-specific I/O (using SDL3 and Clay), enabling portable CHIP-8 and Brainfuck emulation. Test validation with established suites (e.g., Timendus for CHIP-8) confirmed correctness across standard and extended specifications like SCHIP.
+\par The modular architecture of the final application, \textit{Edra}, successfully decoupled emulation logic (via \texttt{cbf} and \texttt{cchip8} libraries) from platform-specific I/O (using SDL3 and Clay), enabling portable CHIP-8 and Brainfuck emulation. Test validation with established suites (e.g., Timendus\cite{CHIP8Timendus} for CHIP-8) confirmed correctness across standard and extended specifications like SCHIP.
 
 \subsection*{Future Work}
 

@@ -1,26 +1,26 @@
 \chapter{The final application}
 \label{chap:ch4}
 
-\par The application, called \href{https://github.com/solomonarul/edra}{\texttt{Edra}}, has been designed from the outset with a primary focus on performance, emphasizing both speed and low latency. To meet these requirements, the C programming language was selected for the development of the emulator, due to its low-level access to system resources and minimal runtime overhead.
+\par The application, called \texttt{Edra\cite{GithubEdra}}, has been designed from the outset with a primary focus on performance, emphasizing both speed and low latency. To meet these requirements, the C programming language was selected for the development of the emulator, due to its low-level access to system resources and minimal runtime overhead.
 
-\par For graphical output and user interaction, the \href{https://wiki.libsdl.org/SDL3/FrontPage}{\texttt{SDL3}} library was chosen for its cross-platform compatibility, lightweight nature, and ease of integration into C-based projects.
+\par For graphical output and user interaction, the \texttt{SDL3\cite{GithubSDL3}} library was chosen for its cross-platform compatibility, lightweight nature, and ease of integration into C-based projects.
 
-\par When evaluating options for graphical user interface (GUI) development in pure C, the available choices were rather limited. The GUI development space is predominantly occupied by C++ libraries such as \href{https://github.com/ocornut/imgui}{\textit{ImGui}}, which are not directly compatible with C without the use of external bindings which would make the development process rather complicated.
+\par When evaluating options for graphical user interface (GUI) development in pure C, the available choices were rather limited. The GUI development space is predominantly occupied by C++ libraries such as \textit{ImGui\cite{GithubIMGUI}}, which are not directly compatible with C without the use of external bindings which would make the development process rather complicated.
 
-\par Ultimately, the project adopted the \href{https://github.com/nicbarker/clay}{\texttt{clay}} library, a platform-agnostic C layout engine. This library facilitates GUI construction by generating a series of rendering operations that can be implemented using a backend such as \href{https://wiki.libsdl.org/SDL3/FrontPage}{\texttt{SDL3}}, thereby enabling flexible and portable UI rendering within the application.
+\par Ultimately, the project adopted the \texttt{clay\cite{GithubCLAY}} library, a platform-agnostic C layout engine. This library facilitates GUI construction by generating a series of rendering operations that can be implemented using a backend such as \texttt{SDL3\cite{GithubSDL3}}, thereby enabling flexible and portable UI rendering within the application.
 
 \section{Design and implementation}
 \label{sec:ch4sec1}
 
-\par The emulator's core functionality was subsequently modularized into a dedicated git submodule, referred to as \href{https://github.com/solomonarul/cchip8}{\texttt{cchip8}}, located in the \textit{lib/cchip8} directory. This module encapsulates all fundamental components required for CHIP8 emulation.
+\par The emulator's core functionality was subsequently modularized into a dedicated git submodule, referred to as \texttt{cchip8\cite{GithubCCHIP8}}, located in the \textit{lib/cchip8} directory. This module encapsulates all fundamental components required for CHIP8 emulation.
 
 \par Building upon this foundation, the CHIP8 driver, located in \textit{drivers/chip8}, instantiates a machine capable of loading and executing CHIP8 programs.
 
-\par This virtual machine is then integrated into an application state, which is responsible for managing its output within the broader context of \href{https://github.com/solomonarul/edra}{\texttt{Edra}}'s state management system.
+\par This virtual machine is then integrated into an application state, which is responsible for managing its output within the broader context of \texttt{Edra\cite{GithubEdra}}'s state management system.
 
-\par Similarly, the Brainfuck emulator has its own module called \href{https://github.com/solomonarul/cbf}{\texttt{cbf}} available at \textit{lib/cbf} which handles all of the components necessary for the machine at \textit{drivers/cbf} which is then used by the state in the app.
+\par Similarly, the Brainfuck emulator has its own module called \texttt{cbf\cite{GithubCBF}} available at \textit{lib/cbf} which handles all of the components necessary for the machine at \textit{drivers/cbf} which is then used by the state in the app.
 
-\par For cross-platform non-standard features, such as dynamic arrays, .ini file parsing and so on, custom implementations have been made and separated into their own separate module called \href{https://github.com/solomonarul/auxum}{\texttt{auxum}} available in the \textit{lib/auxum} folder.
+\par For cross-platform non-standard features, such as dynamic arrays, .ini file parsing and so on, custom implementations have been made and separated into their own separate module called \texttt{auxum\cite{GithubAuxum}} available in the \textit{lib/auxum} folder.
 
 \begin{figure}[htbp]
 \centering
@@ -62,12 +62,12 @@
 
 \par During cross-platform porting efforts, several implementation constraints necessitated platform-specific adaptations:
 \begin{itemize}
-    \item \textit{PlayStation Vita}: JIT emulation was disabled due to the absence of POSIX-compliant threading support, which prevented successful compilation of the GNU Lightning library. Additionally, memory allocation thresholds required modification within the VitaSDK framework, as implemented in \href{https://github.com/solomonarul/auxum/blob/main/inc/auxum/platform/vita/heap.h}{\texttt{auxum}.}
+    \item \textit{PlayStation Vita}: JIT emulation was disabled due to the absence of POSIX-compliant threading support, which prevented successful compilation of the GNU Lightning library. Additionally, memory allocation thresholds required modification within the VitaSDK framework, as implemented in \texttt{auxum\cite{GithubAuxum}}.
     \item \textit{Microsoft Windows}: JIT functionality was similarly disabled following segmentation faults during compilation attributed to GNU Lightning incompatibilities, potentially stemming from toolchain limitations within the GCC Windows environment.
     \item \textit{Linux}: Full functionality was maintained without modification, demonstrating native compatibility with the implementation's architectural dependencies.
 \end{itemize}
 
-\par To facilitate compilation, a standardized build system was implemented using \texttt{Make}. This system provides template commands for all supported platforms, as documented in the project's \href{https://github.com/solomonarul/edra}{\texttt{GitHub repository}}:
+\par To facilitate compilation, a standardized build system was implemented using \texttt{Make}. This system provides template commands for all supported platforms, as documented in the project's \texttt{GitHub repository\cite{GithubEdra}}:
 
 \begin{enumerate}
     \item \textit{Environment Configuration}: Specify \texttt{SDL3\_DIR} and \texttt{SDL3\_TTF\_DIR} variables in CMake's build cache when required for dependency resolution.
@@ -93,18 +93,36 @@
 \section{Usage}
 \label{sec:ch4sec3}
 
-\subsubsection{GUI}
+\par The application is primarily executed via the command line, where it accepts the path to a program as an argument.
+
+\par In systems where command-line access is not available, such as the PlayStation Vita, the application instead loads a program from a predefined location.
+
+\par User interaction with the application can be facilitated through either a keyboard or a gamepad. The keyboard control mappings are described in Section~\ref{chip8:keyboard}, while the gamepad is mapped to corresponding keyboard inputs, as seen in Table~\ref{tab:appcontrols}.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|c|c|c|c|c|}
+\hline
+Q                          & W          & E           & A          & Escape \\ \hline
+A button (or Cross button) & D-Pad Left & D-Pad Right & D-Pad Down & Start  \\ \hline
+\end{tabular}
+\vspace{-0.5em}
+\captionof{table}{Gamepad controls and their corresponding keyboard keys, as referenced in Section~\ref{chip8:keyboard}.}
+\label{tab:appcontrols}
+\end{table}
+
+\subsubsection{Showcase}
 \label{sec:ch4sec4subsub1}
 
 \begin{minipage}{\linewidth}
 \centering
-\includegraphics[width=0.75\textwidth]{app/vita}
+\includegraphics[width=1\textwidth]{app/vita}
 \captionof{figure}{The app running on a PlayStation Vita system.}
 \end{minipage}
 
 \begin{minipage}{\linewidth}
 \centering
-\includegraphics[width=0.66\textwidth]{app/normal}
-\includegraphics[width=0.66\textwidth]{app/pause}
+\includegraphics[width=1\textwidth]{app/normal}
+\includegraphics[width=1\textwidth]{app/pause}
 \captionof{figure}{The app being paused by pressing Escape or Start on a gamepad.}
 \end{minipage}

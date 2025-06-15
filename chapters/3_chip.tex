@@ -16,7 +16,7 @@
 
 \begin{minipage}{\linewidth}
 \includegraphics[width=\textwidth]{ch8/tetris}
-\captionof{figure}{Tetris clone written in CHIP-8 by Fran Dachille in 1991 running in \href{https://github.com/solomonarul/edra}{\texttt{Edra}}.}
+\captionof{figure}{Tetris clone written in CHIP-8 by Fran Dachille in 1991 running in \texttt{Edra\ref{chap:ch4}}.}
 \end{minipage}
 
 \clearpage
@@ -108,6 +108,7 @@ A & S & D & F \\ \hline
 Z & X & C & V \\ \hline
 \end{tabular}
 \caption{Commonly used layout on modern keyboards}
+\label{chip8:keyboard}
 \end{table}
 
 \subsubsection{Instructions \cite{CHIP8Gulrak}}
@@ -174,9 +175,9 @@ FX65 & LD Vx, [I] & Read registers V0 through Vx from memory starting at locatio
 \section{Emulator implementation}
 \label{sec:ch3sec3}
 
-\par The core CHIP-8 library, \href{https://github.com/solomonarul/cchip8}{\texttt{cchip8}}, is organized into modular components: the state, the interpreter, and the static compiler. This architecture enforces a clear separation of concerns, where only the execution runners depend on the state module, and each module operates independently, promoting maintainability and extensibility.
+\par The core CHIP-8 library, \texttt{cchip8\cite{GithubCCHIP8}}, is organized into modular components: the state, the interpreter, and the static compiler. This architecture enforces a clear separation of concerns, where only the execution runners depend on the state module, and each module operates independently, promoting maintainability and extensibility.
 
-\par The state module, defined in \href{https://github.com/solomonarul/cchip8/blob/main/inc/cchip8/state.h}{\texttt{state.h}}, functions as the central interface between the emulator core and the external environment. It encapsulates the full virtual machine state as well as a set of callback function pointers that enable host-controlled behavior, such as memory access, rendering, input handling, and random number generation.
+\par The state module, defined in the file \texttt{state.h}, functions as the central interface between the emulator core and the external environment. It encapsulates the full virtual machine state as well as a set of callback function pointers that enable host-controlled behavior, such as memory access, rendering, input handling, and random number generation.
 
 \par The \texttt{chip8\_state}'s structure maintains essential CHIP-8 runtime components, including program counter (\texttt{pc}), index register (\texttt{i}), stack and stack pointer (\texttt{stack}, \texttt{sp}), \textit{16} general-purpose registers (\texttt{v[0x10]}), timers (\texttt{dt}, \texttt{st}), display resolution parameters, and font memory addresses.
 
@@ -220,7 +221,7 @@ struct chip8_state
 \subsection{Interpreter}
 \label{subsec:ch3sec3sub1}
 
-\par The interpreter, as defined in \href{https://github.com/solomonarul/cchip8/blob/main/inc/cchip8/cpu/interpreter.h}{\texttt{cpu/interpreter.h}}, encapsulates a minimal runtime structure responsible for controlling instruction execution.
+\par The interpreter, as defined in the file \texttt{cpu/interpreter.h}, encapsulates a minimal runtime structure responsible for controlling instruction execution.
 
 \par The \texttt{chip8\_interpreter\_t} struct maintains three key fields: a boolean flag \texttt{running} to indicate whether the interpreter is actively executing instructions, a \texttt{long} field \texttt{timer} to track internal timing mechanisms, and a pointer \texttt{state} to the shared \texttt{chip8\_state\_t} structure, which contains the core emulator state, mentioned above.
 
@@ -260,14 +261,14 @@ typedef struct chip8_interpreter
 \begin{minipage}{\linewidth}
 \includegraphics[width=\textwidth]{ch8/octogon}
 \centering
-\captionof{figure}{Octogon by John Earnest running in \href{https://github.com/solomonarul/edra}{\texttt{Edra}}'s modern SCHIP mode.\\}
+\captionof{figure}{Octogon by John Earnest running in \texttt{Edra\ref{chap:ch4}}'s modern SCHIP mode.\\}
 \end{minipage}
 
 \par The Super-CHIP (SCHIP) extension, introduced by Erik Bryntse in the 1990s, builds upon the original CHIP-8 virtual machine to enhance its graphical capabilities and improve overall program flexibility.
 
 \par The most notable addition is the expansion of the display resolution from \texttt{64x32} pixels to \texttt{128x64} pixels, enabling more detailed graphics.
 
-\par SCHIP also introduces a set of extended instructions\cite{CHIP8Gulrak}, particularly for drawing and scrolling operations, as well as instructions to modify the behavior of the display or interpreter, the ones implemented in \href{https://github.com/solomonarul/edra}{\texttt{Edra}} are as follows:
+\par SCHIP also introduces a set of extended instructions\cite{CHIP8Gulrak}, particularly for drawing and scrolling operations, as well as instructions to modify the behavior of the display or interpreter, the ones implemented in \texttt{Edra\ref{chap:ch4}} are as follows:
 
 \begin{longtable}{|c|p{10cm}|}
 \hline
@@ -298,7 +299,7 @@ DXY0 & Draw 16x16 sprite in high-resolution mode. In low-res mode, behaves like 
 \section{Testing}
 \label{sec:ch3sec5}
 
-\par The current implementation has been tested for correctness using \href{https://github.com/Timendus/chip8-test-suite}{\texttt{Timendus' CHIP8 test suite}}, a well known test suite in the community. It assures correct behaviour, identical to the original implementation unless otherwise specified. 
+\par The current implementation has been tested for correctness using \texttt{Timendus' CHIP8 test suite\cite{CHIP8Timendus}}, a well known test suite in the community. It assures correct behaviour, identical to the original implementation unless otherwise specified. 
 
 \par The suite supports tests from the smallest subset of the instructions that could be implemented, enough for an image of the IBM logo to be displayed:
 
@@ -328,7 +329,7 @@ DXYN & Draw sprite to screen (unaligned, easier to implement).  \\ \hline
 \begin{minipage}{\linewidth}
 \includegraphics[width=\textwidth]{ch8/ibm}
 \centering
-\captionof{figure}{The IBM logo display running in \href{https://github.com/solomonarul/edra}{\texttt{Edra}} showing the correct result.\\}
+\captionof{figure}{The IBM logo display running in \texttt{Edra\ref{chap:ch4}} showing the correct result.\\}
 \end{minipage}
 
 \clearpage
@@ -342,7 +343,7 @@ DXYN & Draw sprite to screen (unaligned, easier to implement).  \\ \hline
 \begin{minipage}{\linewidth}
 \includegraphics[width=\textwidth]{ch8/flags}
 \centering
-\captionof{figure}{The Corax+ opcode and the flags tests running in \href{https://github.com/solomonarul/edra}{\texttt{Edra}} showing the correct result.\\}
+\captionof{figure}{The Corax+ opcode and the flags tests running in \texttt{Edra\ref{chap:ch4}} showing the correct result.\\}
 \end{minipage}
 
 \clearpage
@@ -356,5 +357,5 @@ DXYN & Draw sprite to screen (unaligned, easier to implement).  \\ \hline
 \begin{minipage}{\linewidth}
 \includegraphics[width=\textwidth]{ch8/quirks-schip}
 \centering
-\captionof{figure}{The quirks test, normal CHIP8 and modern SCHIP variants running in \href{https://github.com/solomonarul/edra}{\texttt{Edra}} showing the correct result for each of the respective platforms. \\}
+\captionof{figure}{The quirks test, normal CHIP8 and modern SCHIP variants running in \texttt{Edra\ref{chap:ch4}} showing the correct result for each of the respective platforms. \\}
 \end{minipage}
